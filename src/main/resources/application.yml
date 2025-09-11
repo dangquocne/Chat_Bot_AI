@@ -1,0 +1,13 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: Chat_Bot_AI1
+  ai:
+    openai:
+      api-key: AIzaSyBoJIB7xIHrxVCw6dd8Zv_eJHSe67lmoQM
+      chat:
+        base-url: https://generativelanguage.googleapis.com
+        completions-path: /v1beta/openai/chat/completions
+        options:
+          model: gemini-2.0-flash
