@@ -5,6 +5,7 @@ import chatbot.Chat_Bot_AI1.service.ChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @RestController
 @CrossOrigin
@@ -22,10 +23,13 @@ public class ChatController {
         return chatService.chat(message);
     }
 
-//    @PostMapping("/stream")
-//    public String chatWithStream(@RequestBody ChatRequest request) {
-//        return chatService.chat(request);
-//    }
+    @GetMapping("/stream")
+    public Flux<String> chatWithStream(@RequestParam String message) {
+
+        return  chatService.chatWithStream(message);
+    }
+
+    
 
 
 }

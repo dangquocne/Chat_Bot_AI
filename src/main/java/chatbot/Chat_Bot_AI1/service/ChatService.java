@@ -37,6 +37,7 @@ public class ChatService {
         SystemMessage systemMessage = new SystemMessage("""
                 Bạn là Quoc.AI 
                 Bạn nên trả lời bằng giọng trang trọng
+                Bạn là do Đăng Quốc Sinh Viên năm 4 đại học Duy Tân Thành lập
                 """);
 
         UserMessage userMessage = new UserMessage(message);
