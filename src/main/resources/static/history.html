@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuocGPT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .message-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .message-content code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col">
+<div class="container mx-auto p-4 flex-1 flex flex-col">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <!-- Nút lịch sử chat bên trái -->
+        <a href="/stream.html" id="btn-history"
+           class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+             <span class="hidden sm:inline">Quay lại</span>
+        </a>
+
+        <!-- Tiêu đề chính giữa -->
+        <h1 class="text-2xl font-bold text-gray-800 flex-1 text-center">
+            QUOC GPT
+        </h1>
+
+        <!-- Chừa khoảng trống bên phải để cân đối -->
+        <div class="w-[140px]"></div>
+    </div>
+
+    <!-- Chat box -->
+    <div class="flex-1 overflow-y-auto mb-4 p-4 bg-white rounded-lg shadow">
+        <div id="chat-messages" class="space-y-4"></div>
+    </div>
+
+    <!-- Form nhập tin nhắn -->
+    <form id="chat-form" class="flex items-center">
+        <input
+                type="text"
+                id="message-input"
+                name="message"
+                placeholder="Type your message..."
+                class="flex-1 p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+        >
+
+        <!-- Nút chọn file -->
+        <div class="relative">
+            <input
+                    type="file"
+                    id="file-input"
+                    name="file"
+                    accept="image/*"
+                    multiple
+                    class="w-8 h-8 file:hidden opacity-0 absolute cursor-pointer"
+            />
+            <div
+                    class="w-8 h-8 ml-2 flex items-center justify-center bg-black text-white rounded-full hover:bg-blue-600 cursor-pointer"
+                    onclick="document.getElementById('file-input').click()"
+            >
+                +
+            </div>
+        </div>
+
+        <!-- Nút gửi -->
+        <button
+                type="submit"
+                class="bg-blue-500 ml-2 text-white px-6 py-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            Send
+        </button>
+    </form>
+</div>
+<script>
+    const chatMessages = document.getElementById("chat-messages");
+    const conversationId = "conversation2"; // ví dụ
+
+    function renderMessage(role, content) {
+        const div = document.createElement("div");
+        div.className = role === "USER" ? "text-right" : "text-left";
+        div.innerHTML = `
+      <div
+  class="inline-block px-4 py-2 my-2 max-w-[70%] rounded-2xl shadow-md message-content
+    ${role === 'USER'
+            ? 'bg-blue-500 text-white ml-auto rounded-br-none'
+            : 'bg-gray-200 text-gray-800 mr-auto rounded-bl-none'}">
+  ${content}
+</div>
+    `;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function loadHistory() {
+        chatMessages.innerHTML = "";
+        const res = await fetch(`/history/${conversationId}`);
+        const data = await res.json();
+        data.forEach(msg => renderMessage(msg.messageType, msg.text));
+    }
+
+    // khi mở trang load history
+    loadHistory();
+</script>
+</body>
+</html>
