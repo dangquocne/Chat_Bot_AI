@@ -32,12 +32,30 @@
                 id="message-input"
                 name="message"
                 placeholder="Type your message..."
-                class="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="flex-1 p-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
         >
+
+        <div class="relative">
+            <input
+                    type="file"
+                    id="file-input"
+                    name="file"
+                    accept="image/*"
+                    multiple
+                    class="w-8 h-8 file:hidden opacity-0 absolute cursor-pointer"
+            />
+            <div
+                    class="w-8 h-8 ml-2 flex items-center justify-center bg-black text-white rounded-full hover:bg-blue-600 cursor-pointer"
+                    onclick="document.getElementById('file-input').click()"
+            >
+                +
+            </div>
+        </div>
+
         <button
                 type="submit"
-                class="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="bg-blue-500 ml-2 text-white px-6 py-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
             Send
         </button>
@@ -49,21 +67,82 @@
     const chatForm = document.getElementById('chat-form');
     const messageInput = document.getElementById('message-input');
     const chatMessages = document.getElementById('chat-messages');
+    const fileInput =document.getElementById('file-input');
+
+    // chatForm.addEventListener('submit', async function(e) {
+    //     e.preventDefault();
+    //     const message = messageInput.value;
+    //     const file = fileInput.files[0]; // thêm input file vào form
+    //
+    //     // Không nhập gì và không chọn file thì return
+    //     if (!message && !file) return;
+    //
+    //     // Hiển thị user message
+    //     if (message) {
+    //         // Add user message to chat
+    //         addMessageToChat('User', message);
+    //
+    //         // Clear input
+    //         messageInput.value = '';
+    //     }
+    //     if (file) {
+    //         const imgUrl = URL.createObjectURL(file);
+    //         addImageToChat('User', imgUrl);
+    //         fileInput.value = ''; // reset input file
+    //     }
+    //
+    //
+    //
+    //     // Fetch streaming data from the server
+    //     try {
+    //         const response = await fetchStreamWithRetry('/stream?message=' + encodeURIComponent(message));
+    //         const reader = response.body.getReader();
+    //         let botMessageElement = addMessageToChat('Bot', '');
+    //         let contentElement = botMessageElement.querySelector('.message-content');
+    //         await processStream(reader, contentElement);
+    //     } catch (error) {
+    //         console.error('Error fetching chatbot response:', error);
+    //         addMessageToChat('System', 'An error occurred while fetching the response. Please try again.');
+    //     }
+    // });
 
     chatForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const message = messageInput.value;
-        if (!message) return;
+        const file = fileInput.files[0];
 
-        // Add user message to chat
-        addMessageToChat('User', message);
+        // Không nhập gì và không chọn file thì return
+        if (!message && !file) return;
 
-        // Clear input
-        messageInput.value = '';
+        // Hiển thị user message
+        if (message) {
+            // Add user message to chat
+            addMessageToChat('User', message);
 
-        // Fetch streaming data from the server
+            //Clear input
+            messageInput.value = '';
+        }
+
+        //hiển thị file
+        if (file) {
+            const imgUrl = URL.createObjectURL(file);
+            addImageToChat('User', imgUrl);
+            // Giải phóng object URL sau khi hiển thị
+            setTimeout(() => URL.revokeObjectURL(imgUrl), 5000);
+            fileInput.value = '';
+        }
+
         try {
-            const response = await fetchStreamWithRetry('/stream?message=' + encodeURIComponent(message));
+            //chuẩn bị data lên server
+            const formData = new FormData();
+            if (message) formData.append('message', message);
+            if (file) formData.append('file', file);
+
+            const response = await fetch('/chat-with-image', {
+                method: 'POST',
+                body: formData
+            });
+
             const reader = response.body.getReader();
             let botMessageElement = addMessageToChat('Bot', '');
             let contentElement = botMessageElement.querySelector('.message-content');
@@ -103,6 +182,7 @@
         }
     }
 
+
     function addMessageToChat(sender, content) {
         const messageElement = document.createElement('div');
         messageElement.className = `${sender.toLowerCase()}-message ${sender === 'User' ? 'bg-blue-100' : 'bg-gray-100'} p-3 rounded-lg`;
@@ -113,6 +193,22 @@
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return messageElement;
+    }
+
+
+
+    function addImageToChat(sender, imageUrl) {
+        // const chatBox = document.getElementById('chat-box');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message ' + sender.toLowerCase();
+
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.className = "max-w-[200px] rounded-lg my-2";
+
+        msgDiv.appendChild(img);
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 </script>
 </body>
