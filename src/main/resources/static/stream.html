@@ -20,12 +20,36 @@
 </head>
 <body class="bg-gray-100 h-screen flex flex-col">
 <div class="container mx-auto p-4 flex-1 flex flex-col">
-    <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">QUOC GPT</h1>
 
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <!-- Nút lịch sử chat bên trái -->
+        <a href="/history.html" id="btn-history"
+           class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+            <!-- icon đồng hồ -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"/>
+            </svg>
+            <span class="hidden sm:inline">histories</span>
+        </a>
+
+        <!-- Tiêu đề chính giữa -->
+        <h1 class="text-2xl font-bold text-gray-800 flex-1 text-center">
+            QUOC GPT
+        </h1>
+
+        <!-- Chừa khoảng trống bên phải để cân đối -->
+        <div class="w-[140px]"></div>
+    </div>
+
+    <!-- Chat box -->
     <div class="flex-1 overflow-y-auto mb-4 p-4 bg-white rounded-lg shadow">
         <div id="chat-messages" class="space-y-4"></div>
     </div>
 
+    <!-- Form nhập tin nhắn -->
     <form id="chat-form" class="flex items-center">
         <input
                 type="text"
@@ -36,6 +60,7 @@
                 required
         >
 
+        <!-- Nút chọn file -->
         <div class="relative">
             <input
                     type="file"
@@ -53,6 +78,7 @@
             </div>
         </div>
 
+        <!-- Nút gửi -->
         <button
                 type="submit"
                 class="bg-blue-500 ml-2 text-white px-6 py-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"

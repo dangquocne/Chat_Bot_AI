@@ -3,6 +3,17 @@ server:
 spring:
   application:
     name: Chat_Bot_AI1
+
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/spring_ai_demo
+    username: spring
+    password: spring
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
   ai:
     openai:
       api-key: AIzaSyBoJIB7xIHrxVCw6dd8Zv_eJHSe67lmoQM
@@ -11,3 +22,8 @@ spring:
         completions-path: /v1beta/openai/chat/completions
         options:
           model: gemini-2.0-flash
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always

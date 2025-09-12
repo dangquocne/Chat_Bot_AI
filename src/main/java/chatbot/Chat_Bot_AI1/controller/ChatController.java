@@ -3,19 +3,26 @@ package chatbot.Chat_Bot_AI1.controller;
 import chatbot.Chat_Bot_AI1.dto.ChatRequest;
 import chatbot.Chat_Bot_AI1.service.ChatService;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
 public class ChatController {
 
     private final ChatService chatService;
+    private final ChatMemory chatMemory;
 
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService,ChatMemory chatMemory) {
         this.chatService = chatService;
+        this.chatMemory = chatMemory;
+
     }
 
 
@@ -56,7 +63,10 @@ public class ChatController {
     }
 
 
-
+    @GetMapping("/history/{id}")
+    public List<Message> history(@PathVariable String id ){
+        return chatMemory.get(id);
+    }
 
 
 }
